@@ -1,6 +1,6 @@
-#!/bin/bash
+!/bin/sh
  
-trap "rm -rf ${temp_dir}" EXIT TERM INT QUIT HUP
+trap "rm -rf ${temp_dir}" EXIT
  
 if [ $# -eq 0 ]; then
     echo "Передайте название файла, который необходимо скомпилировать!" >&2
@@ -9,10 +9,10 @@ fi
 file=${1}
 file_name=${file##*/}
 file_path="."
-if [[ ${file} =~ / ]]; then
+if echo "${file}" | grep -q '/'; then
     file_path=${file%/*}
 fi
-grep -q -m 1 '//Output:' ${file} > /dev/null 2>&1
+grep -q '//Output:' ${file} > /dev/null 2>&1
 error_code=$?
 if [ ${error_code} -eq 2 ]; then
     echo "Не удалось найти файл ${file}!" >&2
@@ -22,7 +22,7 @@ if [ ${error_code} -eq 1 ]; then
     echo "Не удалось найти комментарий \"//Output:\"!" >&2
     exit 1002
 fi
-destination=$(grep -m 1 '//Output:' ${file} | sed 's/\/\Output://' | sed 's/ //')
+destination=$(grep '//Output:' ${file} | cut -d ':' -f 2 | tr -d ' ')
 if [ -z ${destination} ]; then
     echo "Название итогового файла не должно быть пустым!" >&2
     exit 1003
