@@ -1,6 +1,6 @@
-!/bin/sh
+#!/bin/sh
  
-trap "rm -rf ${temp_dir}" EXIT
+trap "rm -rf ${temp_dir}" EXIT TERM INT QUIT HUP
  
 if [ $# -eq 0 ]; then
     echo "Передайте название файла, который необходимо скомпилировать!" >&2
